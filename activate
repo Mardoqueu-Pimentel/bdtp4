@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+WD=$(dirname $0)
+cd "${WD}" || exit
+WD=$(pwd)
+
+venv_name=$(basename "${WD}")
+venv_dir=${WD}
+cd "${venv_dir}" || exit
+venv_dir=$(pwd)
+
+function activate() {
+	echo "activating '${venv_name}'"
+	# shellcheck source=./.venv/bin/activate
+	source <(sed -r "s/\`basename[^\r\t\n\`]+\`/${venv_name}/g" < "${WD}/.venv/bin/activate")
+}
+
+if [ ! -f  "${WD}/.venv/bin/activate" ]; then
+	echo "creating '${venv_name}' environment"
+	virtualenv .venv
+	activate
+	python setup.py develop
+	echo "installing requirements.txt" && sleep 1
+	pip install -r ./requirements.txt
+else
+	activate
+fi
+
+if [[ ! "$(jupyter-notebook list)" =~ ${WD} ]]; then
+	echo "starting jupyter notebook"
+	[[ "$(pip freeze)" =~ jupyter ]] || pip install jupyter
+	nohup nohup jupyter-notebook --no-browser &> /dev/zero &
+fi
+
+unset venv_name
+unset venv_dir
