@@ -1,4 +1,5 @@
 import datetime
+import re
 
 
 def parse(filename):
@@ -17,13 +18,13 @@ def parse(filename):
 				if reviews:
 					entry['reviews'] = reviews
 				if categories:
-					entry['categories'] = categories
+					entry['categories'] = re.findall(r'(?<=\|)([^|\[]+)\[(\d+)\]', ''.join(categories))
 				yield entry
 				entry = {}
 				categories = []
 				reviews = []
 				rest = line[colonPos + 2:]
-				entry['id'] = rest.strip()
+				entry['id'] = int(rest.strip())
 
 			elif line.startswith('similar'):
 				similar_items = line.split()[2:]
@@ -32,7 +33,7 @@ def parse(filename):
 			elif line.find('cutomer:') != -1:
 				review_info = line.split()
 				reviews.append({
-					'time': datetime.datetime.strptime(review_info[0], "%Y-%m-%d").timestamp(),
+					'time': int(datetime.datetime.strptime(review_info[0], "%Y-%m-%d").timestamp()),
 					'customer_id': review_info[2],
 					'rating': int(review_info[4]),
 					'votes': int(review_info[6]),
@@ -52,6 +53,6 @@ def parse(filename):
 	if reviews:
 		entry['reviews'] = reviews
 	if categories:
-		entry['categories'] = categories
+		entry['categories'] = re.findall(r'(?<=\|)([^|\[]+)\[(\d+)\]', ''.join(categories))
 
 	yield entry
