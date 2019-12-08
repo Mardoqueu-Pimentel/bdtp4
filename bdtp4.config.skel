@@ -1,0 +1,11 @@
+[bdtp4]
+data-dir = ./data
+
+[db]
+#name = table-name
+#user = user-name
+#password = password
+
+[preprocess]
+amazon-meta = ./data/amazon-meta.txt
+

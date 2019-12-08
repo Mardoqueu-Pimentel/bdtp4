@@ -2,6 +2,24 @@ import datetime
 import re
 
 
+def yielder(entry):
+	if 'categories' in entry:
+		categories = [
+			[
+				[int(catId), catName]
+				for catName, catId in re.findall(r'(?<=\|)([^|\[]+)\[(\d+)\]', x)
+			]
+			for x in entry['categories']
+		]
+		if categories:
+			entry['categories'] = categories
+		else:
+			entry.pop('categories')
+
+	if entry:
+		yield entry
+
+
 def parse(filename):
 	IGNORE_FIELDS = ['Total items', 'reviews']
 	entry = {}
@@ -18,8 +36,8 @@ def parse(filename):
 				if reviews:
 					entry['reviews'] = reviews
 				if categories:
-					entry['categories'] = re.findall(r'(?<=\|)([^|\[]+)\[(\d+)\]', ''.join(categories))
-				yield entry
+					entry['categories'] = categories
+				yield from yielder(entry)
 				entry = {}
 				categories = []
 				reviews = []
@@ -53,6 +71,6 @@ def parse(filename):
 	if reviews:
 		entry['reviews'] = reviews
 	if categories:
-		entry['categories'] = re.findall(r'(?<=\|)([^|\[]+)\[(\d+)\]', ''.join(categories))
+		entry['categories'] = categories
 
-	yield entry
+	yield from yielder(entry)
