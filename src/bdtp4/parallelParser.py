@@ -1,5 +1,6 @@
 import datetime
 import json
+import lzma
 import pathlib
 import re
 from collections import defaultdict
@@ -72,7 +73,7 @@ def worker(batch):
 
 
 def parse(path: pathlib.Path):
-	with path.open() as file:
+	with lzma.open(path) as file:
 		data = file.read().split('\n\n')
 
 	with ProcessPoolExecutor() as executor:

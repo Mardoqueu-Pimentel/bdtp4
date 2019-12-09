@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import configparser
+import lzma
 import pathlib
 import subprocess
 
@@ -13,9 +14,9 @@ def main(*args, config, **kwargs):
 
 	dataDir = pathlib.Path(dataDir)
 	dataDir.mkdir(exist_ok=True)
-	outputFile = dataDir/'dataset.json'
+	outputFile = dataDir / 'dataset.json'
 
-	with outputFile.open('w') as file:
+	with lzma.open(outputFile) as file:
 		for prod in parse(pathlib.Path(inputFile)):
 			print(prod, file=file)
 
