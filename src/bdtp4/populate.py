@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import configparser
+import json
 import lzma
 import pathlib
 import psycopg2 as pg
@@ -41,7 +42,9 @@ def main(*args, config, **kwargs):
 			conn.rollback()
 			conn.reset()
 
-	pass
+	print('Populating category')
+
+
 
 
 def run():

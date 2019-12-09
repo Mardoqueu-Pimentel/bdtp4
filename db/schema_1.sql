@@ -1,66 +1,68 @@
-create table product
-(
-    id         integer not null
-        constraint product_primary_key_id
-            primary key,
-    asin       varchar
-        constraint product_key_asin
-            unique,
-    title      varchar,
-    "group"    varchar,
-    sales_rank varchar
-);
-
-alter table product
-    owner to mard;
-
-create table product_similar
-(
-    first_prod_id  integer not null
-        constraint first_product_fkey
-            references product,
-    second_prod_id integer not null
-        constraint second_product_fkey
-            references product,
-    constraint product_similar_key
-        primary key (first_prod_id, second_prod_id)
-);
-
-alter table product_similar
-    owner to mard;
-
 create table category
 (
     id   integer not null
-        constraint category_primary_key
+        constraint category_pk
             primary key,
-    name varchar
+    name text
 );
 
 alter table category
     owner to mard;
 
+create table product
+(
+    id         integer not null
+        constraint product_pk
+            primary key,
+    asin       text
+        constraint product_k
+            unique,
+    title      text,
+    "group"    text,
+    sales_rank integer
+);
+
+alter table product
+    owner to mard;
+
 create table product_category
 (
     prod_id integer not null
-        constraint product_category_fkey1
+        constraint product_category_fk1
             references product,
     cat_id  integer not null
-        constraint product_category_fkey2
+        constraint product_category_fk2
             references category,
-    constraint product_category_primary_key
-        primary key (prod_id, cat_id)
+    index   integer not null,
+    constraint product_category_pk
+        primary key (prod_id, cat_id, index)
 );
 
 alter table product_category
     owner to mard;
 
+create table product_similar
+(
+    first_prod_id  integer
+        constraint product_similar_fk1
+            references product,
+    second_prod_id integer
+        constraint product_similar_fk2
+            references product,
+    constraint product_similar_pk
+        unique (first_prod_id, second_prod_id)
+);
+
+alter table product_similar
+    owner to mard;
+
 create table review
 (
+    time        timestamp,
     prod_id     integer
         constraint review_fk
             references product,
-    customer_id integer,
+    customer_id text,
     rating      integer,
     votes       integer,
     helpful     integer
